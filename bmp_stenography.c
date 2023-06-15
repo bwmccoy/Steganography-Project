@@ -83,7 +83,6 @@ int main(int argc, char *argv[]) {
     if (!strcmp(type, "--info")) { // if the argument is --info
         // printing the contents of the BMP header and DIB header from the created structs
         printf("=== BMP Header ===\nType: %c%c\nSize: %d\nReserved 1: %d\nReserved 2: %d\nImage Offset: %d\n\n=== DIB Header ===\nSize: %d\nWidth: %d\nHeight: %d\n# color panes: %d\n# bits per pixel: %d\nCompression scheme: %d\nImage size: %d\nHorizontal resolution: %d\nVertical resolution: %d\n# colors in palette: %d\n# important colors: %d\n", read_bmp_header.format_identifier1, read_bmp_header.format_identifier2, read_bmp_header.size_in_bits, read_bmp_header.reserved1, read_bmp_header.reserved2, read_bmp_header.offset, read_dib_header.size, read_dib_header.width, read_dib_header.height, read_dib_header.color_panes, read_dib_header.bits_per_pixel, read_dib_header.compression_scheme, read_dib_header.image_size, read_dib_header.horizontal_res, read_dib_header.vertical_res, read_dib_header.num_of_colors, read_dib_header.num_of_important_colors);
-        fclose(file);
     } else if (!strcmp(type, "--reveal")) {
         // moving file pointer to the start of the pixel array
         fseek(file, read_bmp_header.offset, SEEK_SET);
@@ -101,7 +100,7 @@ int main(int argc, char *argv[]) {
                 fread(&pixel_array, sizeof(pixel_array), 1, file);
 
                 // if there's an encoded 0 for the pixel then its the end of the text so break
-                if (pixel_array.blue == 0x00 && pixel_array.green == 0x00 && pixel_array.red == 0x00) {
+                if (pixel_array.blue == '\0' && pixel_array.green == '\0' && pixel_array.red == '\0') {
                     flag = 1;
                     break;
                 }
@@ -128,9 +127,7 @@ int main(int argc, char *argv[]) {
                 fseek(file, 4 - ((3 * read_dib_header.width) % 4), SEEK_CUR); // advance by the remainder of the way to 4
             } 
         }
-        
-        fclose(file);
-
+        printf("\n");
     } else if (!strcmp(type, "--hide")) {
         // read in the text from filename2 into a string
         char* hidden_text; // string to store the hidden message from filename2
@@ -155,8 +152,6 @@ int main(int argc, char *argv[]) {
         fread (hidden_text, 1, length, textfile);
         fclose (textfile);
 
-        //printf("%s\n", hidden_text);
-
         // read filename1 and transform the current pixel according to the current char and if you reach the strings sentinel stop by encoding a 0
         FILE* file = fopen (filename, "r+");
         if (file == NULL) {
@@ -175,14 +170,14 @@ int main(int argc, char *argv[]) {
         bool flag = 0; // flag to break out of the nested loop
 
         // loop to read each row/col
-        for (int i = 0, k = 0; i < read_dib_header.height; i++) { // rows
+        int k = 0;
+        for (int i = 0; i < read_dib_header.height; i++) { // rows
             if (flag) {
                 break;
             }
             for (int j = 0; j < read_dib_header.width; j++) { // cols
                 if (k < length) {
                     char c = hidden_text[k]; // hidden char 
-                    printf("%c", hidden_text[k]);
                     char c1 = c & 0xF0; // 4 MSB of c followed by four 0s
                     char c2 = c & 0x0F; // 4 LSB of c preceded by four 0s
 
@@ -218,7 +213,16 @@ int main(int argc, char *argv[]) {
                     fwrite(&pixel_array, sizeof(pixel_array), 1, file);
 
                     k++;
-                } else { 
+                } else {
+                    // writing a 0 to the image to denote the text is over 
+                    Pixel_Array pixel_array;
+
+                    pixel_array.blue = '\0';
+                    pixel_array.green = '\0';
+                    pixel_array.red = '\0';
+
+                    fwrite(&pixel_array, sizeof(pixel_array), 1, file);
+
                     flag = 1;
                     break;
                 }
@@ -231,25 +235,9 @@ int main(int argc, char *argv[]) {
             } 
         }
 
-        // end of text from text file, so encode a 0 so that --reveal knows to stop searching for text
-        // reading the pixel
-        Pixel_Array pixel_array;
-        fread(&pixel_array, sizeof(pixel_array), 1, file);
-
-        pixel_array.blue = 0x00;
-        pixel_array.green = 0x00;
-        pixel_array.red = 0x00;
-
-        // to get back to the correct pixel for writing
-        fseek(file, -sizeof(pixel_array), SEEK_CUR); 
-
-        // writing the transformed pixel back to the file
-        fwrite(&pixel_array, sizeof(pixel_array), 1, file);
-        
         free(hidden_text);
-        fclose(file);
     }
-    //fclose(file);
+    fclose(file);
 
     return 0;
 }
