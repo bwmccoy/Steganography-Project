@@ -63,19 +63,19 @@ int main(int argc, char *argv[]) {
 
     // check to make sure format identifier is "BM":
     if (read_bmp_header.format_identifier1 != 'B' || read_bmp_header.format_identifier2 != 'M') {
-        fprintf(stderr, "ERROR: file format not supported\n");
+        fprintf(stderr, "The format is not supported\n");
         exit(1);
     }
 
     // checking that the size of the DIB header is 40
     if (read_dib_header.size != 40) {
-        fprintf(stderr, "ERROR: file format not supported\n");
+        fprintf(stderr, "The format is not supported\n");
         exit(1);
     }
 
     // checking that the pixel data is encoded in 24-bit RGB
     if (read_dib_header.bits_per_pixel != 24) {
-        fprintf(stderr, "ERROR: file format not supported\n");
+        fprintf(stderr, "The format is not supported\n");
         exit(1);
     }
 
@@ -100,7 +100,7 @@ int main(int argc, char *argv[]) {
                 fread(&pixel_array, sizeof(pixel_array), 1, file);
 
                 // if there's an encoded 0 for the pixel then its the end of the text so break
-                if (pixel_array.blue == '\0' && pixel_array.green == '\0' && pixel_array.red == '\0') {
+                if (((pixel_array.green << 4) == '\0') && ((pixel_array.red << 4) == '\0')) {
                     flag = 1;
                     break;
                 }
