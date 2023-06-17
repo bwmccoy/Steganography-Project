@@ -110,9 +110,9 @@ int main(int argc, char *argv[]) {
                 char r_lsb = pixel_array.red & 0x0F; // 4 LSB of red preceded by 0000
                 char b_lsb = pixel_array.blue & 0x0F; // 4 LSB of blue preceded by 0000
 
-                // what XOR'd with b_lsb gets you g_lsb? <- that will reveal the secret 4 LSB of green
+                // revealing the secret 4 LSB of green
                 g_lsb = g_lsb ^ b_lsb;
-                // what XOR'd with b_lsb gets you r_lsb? <- that will reveal the secret 4 LSB of red
+                // revealing the secret 4 LSB of red
                 r_lsb = r_lsb ^ b_lsb;
 
                 // green lsb is nybble1 and red lsb is nybble2 for the hidden char
