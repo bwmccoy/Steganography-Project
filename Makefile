@@ -1,18 +1,18 @@
-bmp_stenograhpy: bmp_stenograhpy.o info.o reveal.o hide.o
-	gcc -o bmp_stenograhpy.o info.o reveal.o hide.o
+bmp_stenography: bmp_stenography.o info.o reveal.o hide.o
+	gcc -o bmp_stenography bmp_stenography.o info.o reveal.o hide.o 
 
-bmp_stenograhpy.o: bmp_stenograhpy.c
-	gcc -c bmp_stenograhpy.c
+bmp_stenography.o:
+	gcc -c bmp_stenography.c
 
-info.o: info.c
+info.o:
 	gcc -c info.c
 
-reveal.o: reveal.c
+reveal.o:
 	gcc -c reveal.c
 
-hide.o: hide.c
+hide.o:
 	gcc -c hide.c
 
 clean:
-	rm bmp_stenography 
+	rm *.o bmp_stenography
 

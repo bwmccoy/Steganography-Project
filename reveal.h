@@ -1,0 +1,1 @@
+void reveal(FILE* file, BMP_Header read_bmp_header, DIB_Header read_dib_header);

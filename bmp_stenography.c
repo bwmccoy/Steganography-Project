@@ -3,9 +3,9 @@
 #include <string.h>
 #include <stdbool.h>
 #include "structs.h"
-#include "info.c"
-#include "reveal.c"
-#include "hide.c"
+#include "info.h"
+#include "reveal.h"
+#include "hide.h"
 
 int main(int argc, char *argv[]) {
     if (argc < 3) {
