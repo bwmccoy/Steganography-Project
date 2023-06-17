@@ -14,5 +14,5 @@ hide.o: hide.c
 	gcc -c hide.c
 
 clean:
-	rm *.o bmp_stenography
+	rm bmp_stenography 
 
