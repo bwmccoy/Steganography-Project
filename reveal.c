@@ -21,7 +21,7 @@ void reveal(FILE* file, BMP_Header read_bmp_header, DIB_Header read_dib_header) 
 
             
             // if there's an encoded 0 for the pixel then its the end of the text so break
-            if ((pixel_array.blue == '\0') && (pixel_array.green == '\0') && (pixel_array.red == '\0')) {
+            if (((pixel_array.green & 0x0F )== '\0') && ((pixel_array.red & 0x0F )== '\0')) {
                 flag = 1;
                 break;
             } 
