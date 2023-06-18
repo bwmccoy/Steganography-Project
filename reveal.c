@@ -19,11 +19,12 @@ void reveal(FILE* file, BMP_Header read_bmp_header, DIB_Header read_dib_header) 
             Pixel_Array pixel_array;
             fread(&pixel_array, sizeof(pixel_array), 1, file);
 
+            
             // if there's an encoded 0 for the pixel then its the end of the text so break
-            if (((pixel_array.green << 4) == '\0') && ((pixel_array.red << 4) == '\0')) {
+            if ((pixel_array.blue == '\0') && (pixel_array.green == '\0') && (pixel_array.red == '\0')) {
                 flag = 1;
                 break;
-            }
+            } 
 
             // transforming it
             char g_lsb = pixel_array.green & 0x0F; // 4 LSB of green preceded by 0000

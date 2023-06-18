@@ -28,13 +28,6 @@ void hide(FILE* file, char* filename2, BMP_Header read_bmp_header, DIB_Header re
     fread (hidden_text, 1, length, textfile);
     fclose (textfile);
 
-    // read filename1 and transform the current pixel according to the current char and if you reach the strings sentinel stop by encoding a 0
-    /*FILE* file = fopen (filename, "r+");
-    if (file == NULL) {
-        fprintf(stderr, "Error opening bmp file\n");
-        exit(1);
-    }*/
-
     // if the text is too large to fit in filename1
     if (length > read_dib_header.image_size) {
         fprintf(stderr, "ERROR: text too large\n");
@@ -90,17 +83,27 @@ void hide(FILE* file, char* filename2, BMP_Header read_bmp_header, DIB_Header re
 
                 k++;
             } else {
+                /*
                 // writing a 0 to the 4 LSB of green and red to denote the text is over 
                 Pixel_Array pixel_array;
                 fread(&pixel_array, sizeof(pixel_array), 1, file);
 
                 pixel_array.green = pixel_array.green & 0xF0;
                 pixel_array.red = pixel_array.red & 0xF0;
-
+                
                 // to get back to the correct pixel for writing
                 fseek(file, -sizeof(pixel_array), SEEK_CUR); 
 
-                fwrite(&pixel_array, sizeof(pixel_array), 1, file);
+                fwrite(&pixel_array, sizeof(pixel_array), 1, file); */
+
+                // writing a 0 to the image to denote the text is over 
+                Pixel_Array pixel_array;
+
+                pixel_array.blue = '\0';
+                pixel_array.green = '\0';
+                pixel_array.red = '\0';
+
+                fwrite(&pixel_array, sizeof(pixel_array), 1, file); 
 
                 flag = 1;
                 break;
