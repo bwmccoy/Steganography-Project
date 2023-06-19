@@ -66,9 +66,13 @@ void hide(FILE* file, char* filename2, BMP_Header read_bmp_header, DIB_Header re
             } else {
                 // writing a 0 to the image to denote the text is over 
                 Pixel_Array pixel_array;
-                pixel_array.blue = '\0';
-                pixel_array.green = '\0';
-                pixel_array.red = '\0';
+                fread(&pixel_array, sizeof(pixel_array), 1, file);
+
+                pixel_array.green = pixel_array.green & 0xF0;
+                pixel_array.red = pixel_array.red & 0xF0;
+
+                // to get back to the correct pixel for writing
+                fseek(file, -sizeof(pixel_array), SEEK_CUR); 
 
                 fwrite(&pixel_array, sizeof(pixel_array), 1, file); 
 
