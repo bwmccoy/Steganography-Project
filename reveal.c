@@ -9,11 +9,11 @@ void reveal(FILE* file, BMP_Header read_bmp_header, DIB_Header read_dib_header) 
     
     bool flag = 0;
     // loop to read each row/col
-    for (int i = 0; i < read_dib_header.height; i++) { // rows
+    for (int i = 0; i < 1; i++) { // rows
         if (flag) {
             break;
         }
-        for (int j = 0; j < read_dib_header.width; j++) { // cols
+        for (int j = 0; j < 20; j++) { // cols
 
             // reading a pixel
             Pixel_Array pixel_array;
