@@ -9,28 +9,26 @@ void reveal(FILE* file, BMP_Header read_bmp_header, DIB_Header read_dib_header) 
     
     bool flag = 0;
     // loop to read each row/col
-    for (int i = 0; i < 1; i++) { // rows
+    for (int i = 0; i < read_dib_header.height; i++) { // rows
         if (flag) {
             break;
         }
-        for (int j = 0; j < 20; j++) { // cols
+        for (int j = 0; j < read_dib_header.width; j++) { // cols
 
             // reading a pixel
             Pixel_Array pixel_array;
             fread(&pixel_array, sizeof(pixel_array), 1, file);
 
-            
-            // if there's an encoded 0 for the pixel then its the end of the text so break
-            if ((pixel_array.blue == '\0') && (pixel_array.green == '\0') && (pixel_array.red == '\0')) {
-                flag = 1;
-                break;
-            } 
-
-
             // transforming it
             char g_lsb = pixel_array.green & 0x0F; // 4 LSB of green preceded by 0000
             char r_lsb = pixel_array.red & 0x0F; // 4 LSB of red preceded by 0000
             char b_lsb = pixel_array.blue & 0x0F; // 4 LSB of blue preceded by 0000
+
+            // if there's an encoded 0 for the pixel then its the end of the text so break
+            if ((g_lsb == '\0') && (r_lsb == '\0')) {
+                flag = 1;
+                break;
+            }
 
             // revealing the secret 4 LSB of green
             g_lsb = g_lsb ^ b_lsb;
