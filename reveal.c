@@ -23,12 +23,12 @@ void reveal(FILE* file, BMP_Header read_bmp_header, DIB_Header read_dib_header) 
             char g_lsb = pixel_array.green & 0x0F; // 4 LSB of green preceded by 0000
             char r_lsb = pixel_array.red & 0x0F; // 4 LSB of red preceded by 0000
             char b_lsb = pixel_array.blue & 0x0F; // 4 LSB of blue preceded by 0000
-
+            /*
             // if there's an encoded 0 for the pixel then its the end of the text so break
-            if ((g_lsb == '\0') && (r_lsb == '\0')) {
+            if ((g_lsb == 0x00) && (r_lsb == 0x00)) {
                 flag = 1;
                 break;
-            }
+            } */
 
             // revealing the secret 4 LSB of green
             g_lsb = g_lsb ^ b_lsb;
@@ -37,6 +37,12 @@ void reveal(FILE* file, BMP_Header read_bmp_header, DIB_Header read_dib_header) 
 
             // green lsb is nybble1 and red lsb is nybble2 for the hidden char
             char c = (g_lsb << 4) | r_lsb;
+
+            // if theres an encoded 0 for the char then its the end of the text so break
+            if (c == 0x00) {
+                flag = 1;
+                break;
+            }
 
             printf("%c", c);
 

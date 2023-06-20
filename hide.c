@@ -68,8 +68,18 @@ void hide(FILE* file, char* filename2, BMP_Header read_bmp_header, DIB_Header re
                 Pixel_Array pixel_array;
                 fread(&pixel_array, sizeof(pixel_array), 1, file);
 
-                pixel_array.green = pixel_array.green & 0xF0;
-                pixel_array.red = pixel_array.red & 0xF0;
+                char g_lsb = pixel_array.green & 0x0F;
+                char g_msb = pixel_array.green & 0xF0;
+                char r_lsb = pixel_array.red & 0x0F;
+                char r_msb = pixel_array.red & 0xF0;
+                char b_lsb = pixel_array.blue & 0x0F;
+
+                g_lsb = 0x00 ^ b_lsb;
+                r_lsb = 0x00 ^ b_lsb;
+
+                // updating the pixel_array struct with encoded green and red 
+                pixel_array.green = g_msb | g_lsb; 
+                pixel_array.red = r_msb | r_lsb;
 
                 // to get back to the correct pixel for writing
                 fseek(file, -sizeof(pixel_array), SEEK_CUR); 
