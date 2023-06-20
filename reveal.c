@@ -23,12 +23,6 @@ void reveal(FILE* file, BMP_Header read_bmp_header, DIB_Header read_dib_header) 
             char g_lsb = pixel_array.green & 0x0F; // 4 LSB of green preceded by 0000
             char r_lsb = pixel_array.red & 0x0F; // 4 LSB of red preceded by 0000
             char b_lsb = pixel_array.blue & 0x0F; // 4 LSB of blue preceded by 0000
-            /*
-            // if there's an encoded 0 for the pixel then its the end of the text so break
-            if ((g_lsb == 0x00) && (r_lsb == 0x00)) {
-                flag = 1;
-                break;
-            } */
 
             // revealing the secret 4 LSB of green
             g_lsb = g_lsb ^ b_lsb;
@@ -49,8 +43,8 @@ void reveal(FILE* file, BMP_Header read_bmp_header, DIB_Header read_dib_header) 
         }
 
         // checking for extra padding at end of row and skipping them if they exist
-        if (read_dib_header.width % 4 != 0) { // not a multiple of 4
-            fseek(file, 4 - (read_dib_header.width % 4), SEEK_CUR); // advance by the remainder of the way to 4
+        if ((3 * read_dib_header.width) % 4 != 0) { // not a multiple of 4
+            fseek(file, 4 - ((3 * read_dib_header.width) % 4), SEEK_CUR); // advance by the remainder of the way to 4
         } 
     }
     printf("\n");
