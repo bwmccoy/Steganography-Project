@@ -49,8 +49,8 @@ void reveal(FILE* file, BMP_Header read_bmp_header, DIB_Header read_dib_header) 
         }
 
         // checking for extra padding at end of row and skipping them if they exist
-        if ((3 * read_dib_header.width) % 4 != 0) { // not a multiple of 4
-            fseek(file, 4 - ((3 * read_dib_header.width) % 4), SEEK_CUR); // advance by the remainder of the way to 4
+        if (read_dib_header.width % 4 != 0) { // not a multiple of 4
+            fseek(file, 4 - (read_dib_header.width % 4), SEEK_CUR); // advance by the remainder of the way to 4
         } 
     }
     printf("\n");
