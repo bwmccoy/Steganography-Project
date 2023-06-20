@@ -20,6 +20,8 @@ void hide(FILE* file, char* filename2, BMP_Header read_bmp_header, DIB_Header re
     char c1;
     char c2;
 
+    int padding = (4 - ((3 * read_dib_header.width) % 4)) % 4; // Calculate the padding size
+
     bool flag = 0; // flag to break out of the nested loop
 
     // loop to read each row/col
@@ -58,12 +60,8 @@ void hide(FILE* file, char* filename2, BMP_Header read_bmp_header, DIB_Header re
                 pixel_array.green = g_msb | g_lsb; 
                 pixel_array.red = r_msb | r_lsb;
 
-                
-                // calculate the padding for the current row
-                int padding = (4 - (3 * read_dib_header.width) % 4) % 4;
-
                 // to get back to the correct pixel for writing
-                fseek(file, -sizeof(pixel_array) + padding, SEEK_CUR); 
+                fseek(file, -sizeof(pixel_array), SEEK_CUR); 
 
                 // writing the transformed pixel back to the file
                 fwrite(&pixel_array, sizeof(pixel_array), 1, file);
@@ -85,11 +83,8 @@ void hide(FILE* file, char* filename2, BMP_Header read_bmp_header, DIB_Header re
                 pixel_array.green = g_msb | g_lsb; 
                 pixel_array.red = r_msb | r_lsb;
 
-                // calculate the padding for the current row
-                int padding = (4 - (3 * read_dib_header.width) % 4) % 4;
-
                 // to get back to the correct pixel for writing
-                fseek(file, -sizeof(pixel_array) + padding, SEEK_CUR); 
+                fseek(file, -sizeof(pixel_array), SEEK_CUR); 
 
                 fwrite(&pixel_array, sizeof(pixel_array), 1, file); 
 
@@ -100,9 +95,10 @@ void hide(FILE* file, char* filename2, BMP_Header read_bmp_header, DIB_Header re
         }
 
         // checking for extra padding at end of row and skipping them if they exist
-        if ((3 * read_dib_header.width) % 4 != 0) { // not a multiple of 4
-            fseek(file, 4 - ((3 * read_dib_header.width) % 4), SEEK_CUR); // advance by the remainder of the way to 4
-        } 
+        // Skipping the padding if it exists
+        if (padding > 0) {
+            fseek(file, padding, SEEK_CUR);
+        }
     }
 
     // if the textfile is too large for image

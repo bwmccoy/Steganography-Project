@@ -7,6 +7,8 @@ void reveal(FILE* file, BMP_Header read_bmp_header, DIB_Header read_dib_header) 
     // moving file pointer to the start of the pixel array
     fseek(file, read_bmp_header.offset, SEEK_SET);
     
+    int padding = (4 - ((3 * read_dib_header.width) % 4)) % 4; // Calculate the padding size
+
     bool flag = 0;
     // loop to read each row/col
     for (int i = 0; i < read_dib_header.height; i++) { // rows
@@ -43,9 +45,10 @@ void reveal(FILE* file, BMP_Header read_bmp_header, DIB_Header read_dib_header) 
         }
 
         // checking for extra padding at end of row and skipping them if they exist
-        if ((3 * read_dib_header.width) % 4 != 0) { // not a multiple of 4
-            fseek(file, 4 - ((3 * read_dib_header.width) % 4), SEEK_CUR); // advance by the remainder of the way to 4
-        } 
+        // Skipping the padding if it exists
+        if (padding > 0) {
+            fseek(file, padding, SEEK_CUR);
+        }
     }
     printf("\n");
 }
