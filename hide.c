@@ -20,7 +20,7 @@ void hide(FILE* file, char* filename2, BMP_Header read_bmp_header, DIB_Header re
     char c1;
     char c2;
 
-    int padding = 4 - ((3 * read_dib_header.width) % 4); // Calculate the padding size
+    int padding = 4 - ((3 * read_dib_header.width) % 4) % 4; // Calculate the padding size
 
     bool flag = 0; // flag to break out of the nested loop
 
